@@ -49,10 +49,6 @@ var Store = {
 
         break;
 
-      case 'SUBMIT':
-        console.log(this.getState());
-        break;
-
       case 'YOUTUBE_PLAYER_READY':
         this.player = action.player;
         this.videoLength = this.player.getDuration();
@@ -82,9 +78,9 @@ var Actions = {
   submit: () => {
     $.ajax({
       type: 'POST',
-      url: 'http://localhost:4567/stub',
+      url: '/convert',
       data: {
-        url: Store.getState().url,
+        video_id: Store.getState().videoId,
         start: Store.getState().start,
         end: Store.getState().end
       },
@@ -123,7 +119,6 @@ class App extends Component {
 
   onYouTubePlayerReady(event) {
     Actions.youtubePlayerReady(event.target);
-    // event.target
   }
 
   componentDidMount() {
