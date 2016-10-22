@@ -11,14 +11,16 @@ var Store = {
   listeners: [],
 
   videoLength: 1,
+  videoId: '',
   url: '',
   start: 0,
-  end: 100,
+  end: 0,
   player: null,
 
   getState: function () {
     return {
       videoLength: this.videoLength,
+      videoId: this.videoId,
       url: this.url,
       start: this.start,
       end: this.end,
@@ -30,6 +32,12 @@ var Store = {
     switch (action.type) {
       case 'UPDATE_URL':
         this.url = action.value;
+        this.videoId =
+          this.url
+            .substr(this.url.indexOf('?') + 1)
+            .split('&')
+            .filter(function(queryParam) { return queryParam.substr(0,2) === 'v='; })[0]
+            .split('=')[1];
         break;
 
       case 'UPDATE_SLIDER':
@@ -48,6 +56,7 @@ var Store = {
       case 'YOUTUBE_PLAYER_READY':
         this.player = action.player;
         this.videoLength = this.player.getDuration();
+        this.end = this.videoLength;
 
         break;
 
@@ -127,37 +136,51 @@ class App extends Component {
     console.log(event);
   }
 
+  showPlayer() {
+    return this.state.url ?
+      <div>
+        <YouTube
+          className="mt3 mb4 yt-player"
+          videoId={this.state.videoId}
+          opts={{
+            height: '390',
+            width: '640',
+            playerVars: { // https://developers.google.com/youtube/player_parameters
+              autoplay: 1,
+              loop: 1,
+              playlist: this.state.videoId,
+              start: this.state.start,
+              end: this.state.end
+            }
+          }}
+          onReady={this.onYouTubePlayerReady}
+          onStateChange={Actions.changePlayerState}
+        />
+        <button className="btn bg-blue white" onClick={Actions.submit}>Load Video</button>
+      </div> :
+      <h1>Please enter a video URL</h1>;
+  }
+
+  showSlider() {
+    return this.state.player
+      ? <Nouislider
+          range={{min: 0, max: this.state.videoLength}}
+          start={[this.state.start, this.state.end]}
+          step={1}
+          tooltips
+          onChange={this.sliderUpdated}
+        />
+      : '';
+  }
+
   render() {
     return (
       <div className="max-width-3 mx-auto">
         <div className="px2 mt3">
           <div className="App">
             <input className="input" value={this.state.url} onChange={Actions.updateUrl} type="text" name="url" placeholder="Enter Youtube Video URL"/>
-            <button className="btn bg-blue white" onClick={Actions.submit}>Convert to GIF</button>
-            <YouTube
-              className="mt3 mb4 yt-player"
-              videoId="2g811Eo7K8U"
-              opts={{
-                height: '390',
-                width: '640',
-                playerVars: { // https://developers.google.com/youtube/player_parameters
-                  autoplay: 1,
-                  loop: 1,
-                  playlist: "2g811Eo7K8U",
-                  start: this.state.start,
-                  end: this.state.end
-                }
-              }}
-              onReady={this.onYouTubePlayerReady}
-              onStateChange={Actions.changePlayerState}
-            />
-            <Nouislider
-              range={{min: 0, max: this.state.videoLength}}
-              start={[this.state.start, this.state.end]}
-              step={1}
-              tooltips
-              onChange={this.sliderUpdated}
-            />
+            { this.showPlayer() }
+            { this.showSlider() }
           </div>
         </div>
       </div>
