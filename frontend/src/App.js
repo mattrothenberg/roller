@@ -31,6 +31,7 @@ var Store = {
       case 'UPDATE_URL':
         this.url = action.value;
         break;
+
       case 'UPDATE_SLIDER':
         if(this.start != action.left) {
           this.player.seekTo(action.left);
@@ -39,14 +40,21 @@ var Store = {
         this.end = action.right;
 
         break;
+
       case 'SUBMIT':
         console.log(this.getState());
         break;
+
       case 'YOUTUBE_PLAYER_READY':
         this.player = action.player;
         this.videoLength = this.player.getDuration();
 
         break;
+
+      case 'VIDEO_ENDED':
+        this.player.seekTo(this.start);
+        break;
+
       default:
         return;
     }
@@ -82,6 +90,11 @@ var Actions = {
   },
   updateSlider: (left, right) => {
     Store.dispatch({type: 'UPDATE_SLIDER', left: left, right: right })
+  },
+  changePlayerState: (event) => {
+    if(event.data === 0) {
+      Store.dispatch({type: 'VIDEO_ENDED'});
+    }
   }
 };
 
@@ -124,8 +137,19 @@ class App extends Component {
             <YouTube
               className="mt3 mb4 yt-player"
               videoId="2g811Eo7K8U"
-              opts={opts}
+              opts={{
+                height: '390',
+                width: '640',
+                playerVars: { // https://developers.google.com/youtube/player_parameters
+                  autoplay: 1,
+                  loop: 1,
+                  playlist: "2g811Eo7K8U",
+                  start: this.state.start,
+                  end: this.state.end
+                }
+              }}
               onReady={this.onYouTubePlayerReady}
+              onStateChange={Actions.changePlayerState}
             />
             <Nouislider
               range={{min: 0, max: this.state.videoLength}}
