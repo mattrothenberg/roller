@@ -156,21 +156,22 @@ class App extends Component {
           onReady={this.onYouTubePlayerReady}
           onStateChange={Actions.changePlayerState}
         />
-        <button className="btn bg-blue white" onClick={Actions.submit}>Load Video</button>
       </div> :
       <h1>Please enter a video URL</h1>;
   }
 
   showSlider() {
-    return this.state.player
-      ? <Nouislider
-          range={{min: 0, max: this.state.videoLength}}
-          start={[this.state.start, this.state.end]}
-          step={1}
-          tooltips
-          onChange={this.sliderUpdated}
-        />
-      : '';
+    return this.state.player &&
+      <div>
+          <Nouislider
+            range={{min: 0, max: this.state.videoLength}}
+            start={[this.state.start, this.state.end]}
+            step={1}
+            tooltips
+            onChange={this.sliderUpdated}
+          />
+          <button className="btn bg-blue white mt3" onClick={Actions.submit}>Convert to Gif</button>
+        </div>
   }
 
   render() {
