@@ -19,3 +19,11 @@ def get_mp4_video_url(video_id)
   stream['url'].first
 end
 
+def store_at(url, path)
+  open(url) do |video_file|
+    File.open(path, 'wb') do |file|
+      file.puts video_file.read
+    end
+  end
+end
+
