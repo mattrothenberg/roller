@@ -2,41 +2,47 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './styles.scss';
 import $ from 'jquery';
+import YouTube from 'react-youtube';
+import Nouislider from 'react-nouislider';
+
 
 var Store = {
 
-    listeners: [],
+  listeners: [],
 
-    url: '',
-    start: '',
-    end: '',
-    getState: function() {
-      return {
-        url: this.url,
-        start: this.start,
-        end: this.end,
-      }
-    },
-
-    dispatch: function(action) {
-        switch(action.type) {
-            case 'UPDATE_START':
-                this.start = action.value;
-                break;
-            case 'UPDATE_END':
-                this.end = action.value;
-                break;
-            case 'UPDATE_URL':
-                this.url = action.value;
-                break;
-            case 'SUBMIT':
-                console.log(this.getState())
-                break;
-        }
-
-        var self = this;
-        this.listeners.forEach(function(listener) { listener(self) });
+  url: '',
+  start: 0,
+  end: 100,
+  getState: function () {
+    return {
+      url: this.url,
+      start: this.start,
+      end: this.end,
     }
+  },
+
+  dispatch: function (action) {
+    switch (action.type) {
+      case 'UPDATE_URL':
+        this.url = action.value;
+        break;
+      case 'UPDATE_SLIDER':
+        console.log(action);
+        this.start = action.left;
+        this.end = action.right;
+        break;
+      case 'SUBMIT':
+        console.log(this.getState());
+        break;
+      default:
+        return;
+    }
+
+    var self = this;
+    this.listeners.forEach(function (listener) {
+      listener(self)
+    });
+  }
 };
 
 var Actions = {
@@ -58,19 +64,27 @@ var Actions = {
   updateUrl: (event) => {
     Store.dispatch({type: 'UPDATE_URL', value: event.target.value})
   },
-  updateStart: (event) => {
-    Store.dispatch({type: 'UPDATE_START', value: event.target.value})
-  },
-  updateEnd: (event) => {
-    Store.dispatch({type: 'UPDATE_END', value: event.target.value})
+  updateSlider: (left, right) => {
+    Store.dispatch({type: 'UPDATE_SLIDER', left: left, right: right })
+  }
+};
+
+const opts = {
+  height: '390',
+  width: '640',
+  playerVars: { // https://developers.google.com/youtube/player_parameters
+    autoplay: 1
   }
 };
 
 class App extends Component {
   constructor() {
     super();
-
     this.state = Store.getState();
+  }
+
+  onYouTubePlayerReady(event) {
+    console.log(event.target);
   }
 
   componentDidMount() {
@@ -78,20 +92,29 @@ class App extends Component {
     Store.listeners.push(function(store) { self.setState(store.getState()); });
   }
 
+  sliderUpdated(event) {
+    Actions.updateSlider(parseFloat(event[0]), parseFloat(event[1]));
+    console.log(event);
+  }
+
   render() {
     return (
       <div className="App">
-          <div><input value={this.state.url} onChange={Actions.updateUrl} type="text" name="url" placeholder="Enter Youtube Video URL"/></div>
-          <div><input value={this.state.start} onChange={Actions.updateStart} type="text" name="start" placeholder="Enter Start Time"/></div>
-          <div><input value={this.state.end} onChange={Actions.updateEnd} type="text" name="end" placeholder="Enter End Time"/></div>
-          <button onClick={Actions.submit}>Convert to GIF</button>
+        <div><input value={this.state.url} onChange={Actions.updateUrl} type="text" name="url" placeholder="Enter Youtube Video URL"/></div>
+        <button onClick={Actions.submit}>Convert to GIF</button>
+          <YouTube
+            videoId="2g811Eo7K8U"
+            opts={opts}
+            onReady={this.onYouTubePlayerReady}
+          />
+        <Nouislider
+          range={{min: 0, max: 100}}
+          start={[this.state.start, this.state.end]}
+          tooltips
+          onChange={this.sliderUpdated}
+        />
       </div>
     );
-  }
-
-  postToBackend(stuff) {
-      console.log(this);
-      console.log(stuff);
   }
 }
 
