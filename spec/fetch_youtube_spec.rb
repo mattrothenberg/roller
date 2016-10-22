@@ -1,9 +1,7 @@
 require_relative '../youtube.rb'
 
-describe 'fetching youtube things' do
-
-  it 'gets the youtube things' do
-
+describe 'fetching youtube videos' do
+  it 'gets the youtube videos' do
     source_url = get_mp4_video_url('CMNry4PE93Y')
 
     expect(source_url).to include('googlevideo.com')
@@ -11,7 +9,7 @@ describe 'fetching youtube things' do
   end
 end
 
-describe 'downloading youtube things' do
+describe 'downloading youtube videos' do
   file_path = '/tmp/test-video.mp4'
 
   before do
