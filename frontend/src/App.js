@@ -170,7 +170,7 @@ class App extends Component {
             tooltips
             onChange={this.sliderUpdated}
           />
-          <button className="btn bg-blue white mt3" onClick={Actions.submit}>Convert to Gif</button>
+          <button className="btn bg-blue white mt4" onClick={Actions.submit}>Convert to Gif</button>
         </div>
   }
 

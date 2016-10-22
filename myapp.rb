@@ -1,7 +1,10 @@
 require 'sinatra'
 
+set :public_folder, './frontend/build'
+
+
 get '/' do
-  File.open('./frontend/index.html') do |file|
+  File.open('./frontend/build/index.html') do |file|
     file.read
   end
 end
