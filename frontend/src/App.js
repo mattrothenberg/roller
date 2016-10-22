@@ -10,14 +10,19 @@ var Store = {
 
   listeners: [],
 
+  videoLength: 1,
   url: '',
   start: 0,
   end: 100,
+  player: null,
+
   getState: function () {
     return {
+      videoLength: this.videoLength,
       url: this.url,
       start: this.start,
       end: this.end,
+      player: this.player
     }
   },
 
@@ -27,12 +32,20 @@ var Store = {
         this.url = action.value;
         break;
       case 'UPDATE_SLIDER':
-        console.log(action);
+        if(this.start != action.left) {
+          this.player.seekTo(action.left);
+        }
         this.start = action.left;
         this.end = action.right;
+
         break;
       case 'SUBMIT':
         console.log(this.getState());
+        break;
+      case 'YOUTUBE_PLAYER_READY':
+        this.player = action.player;
+        this.videoLength = this.player.getDuration();
+
         break;
       default:
         return;
@@ -46,7 +59,10 @@ var Store = {
 };
 
 var Actions = {
-  submit: (event) => {
+  youtubePlayerReady: (player) => {
+    Store.dispatch({type: 'YOUTUBE_PLAYER_READY', player: player})
+  },
+  submit: () => {
     $.ajax({
       type: 'POST',
       url: 'http://localhost:4567/stub',
@@ -73,7 +89,7 @@ const opts = {
   height: '390',
   width: '640',
   playerVars: { // https://developers.google.com/youtube/player_parameters
-    autoplay: 1
+    autoplay: 0
   }
 };
 
@@ -84,7 +100,8 @@ class App extends Component {
   }
 
   onYouTubePlayerReady(event) {
-    console.log(event.target);
+    Actions.youtubePlayerReady(event.target);
+    // event.target
   }
 
   componentDidMount() {
@@ -99,20 +116,26 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <div><input value={this.state.url} onChange={Actions.updateUrl} type="text" name="url" placeholder="Enter Youtube Video URL"/></div>
-        <button onClick={Actions.submit}>Convert to GIF</button>
-          <YouTube
-            videoId="2g811Eo7K8U"
-            opts={opts}
-            onReady={this.onYouTubePlayerReady}
-          />
-        <Nouislider
-          range={{min: 0, max: 100}}
-          start={[this.state.start, this.state.end]}
-          tooltips
-          onChange={this.sliderUpdated}
-        />
+      <div className="max-width-3 mx-auto">
+        <div className="px2 mt3">
+          <div className="App">
+            <input className="input" value={this.state.url} onChange={Actions.updateUrl} type="text" name="url" placeholder="Enter Youtube Video URL"/>
+            <button className="btn bg-blue white" onClick={Actions.submit}>Convert to GIF</button>
+            <YouTube
+              className="mt3 mb4 yt-player"
+              videoId="2g811Eo7K8U"
+              opts={opts}
+              onReady={this.onYouTubePlayerReady}
+            />
+            <Nouislider
+              range={{min: 0, max: this.state.videoLength}}
+              start={[this.state.start, this.state.end]}
+              step={1}
+              tooltips
+              onChange={this.sliderUpdated}
+            />
+          </div>
+        </div>
       </div>
     );
   }
