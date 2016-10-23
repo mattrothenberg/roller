@@ -7,6 +7,7 @@ import Nouislider from 'react-nouislider';
 import Loader from './Loader.js';
 import ClipboardButton from 'react-clipboard.js';
 
+const MAX_LENGTH = 15;
 
 var Store = {
 
@@ -30,7 +31,10 @@ var Store = {
       start: this.start,
       end: this.end,
       player: this.player,
-      gifUrl: this.gifUrl
+      gifUrl: this.gifUrl,
+      validationErrors: {
+        tooLong: this.end - this.start > MAX_LENGTH
+      }
     }
   },
 
@@ -143,7 +147,6 @@ class App extends Component {
 
   sliderUpdated(event) {
     Actions.updateSlider(parseFloat(event[0]), parseFloat(event[1]));
-    console.log(event);
   }
 
   showPlayer() {
@@ -200,9 +203,12 @@ class App extends Component {
             tooltips
             onChange={this.sliderUpdated}
           />
+          <p className="mb0">
+            {`Set the start and end points (max length is ${MAX_LENGTH} seconds).`}
+          </p>
           <button
-            className="btn bg-blue h3  white mt4 btn-submit right"
-            disabled={this.state.loading}
+            className="btn bg-blue h3  white mt2 btn-submit right"
+            disabled={this.state.loading || this.state.validationErrors.tooLong}
             onClick={Actions.submit}>Convert to Gif</button>
         </div>
   }
@@ -211,11 +217,6 @@ class App extends Component {
     return(
         <div className="max-width-4 mx-auto mt3">
           <div className="px2">
-            <div className="flex">
-              <button className="btn bg-blue h4 white btn-submit" onClick={Actions.reset}>
-                Back
-              </button>
-            </div>
             <hr className="my1"/>
             <div className="clearfix mt2">
               <div className="col sm-col-6">
@@ -239,6 +240,9 @@ class App extends Component {
                 </a>
               </div>
             </div>
+            <button className="btn bg-pink h4 white block" onClick={Actions.reset}>
+              Another One
+            </button>
           </div>
         </div>
     )
