@@ -188,10 +188,13 @@ class App extends Component {
         </div>
       </div> :
       <div className="clearfix">
-        <div className="col sm-col-7">
-          <h1 className="regular h4 sm-h2">
-            Roller allows you to easily isolate specific bits of YouTube videos – just the part you want to see – and then send the GIF as a link to your friends while preserving the element of surprise.
-          </h1>
+        <div className="col sm-col-8">
+          <p className="h4 sm-h2">
+            Have you ever found yourself wishing you could create a GIF of a short clip from a YouTube video?
+          </p>
+          <p className="h4 sm-h2">
+            Enjoy.
+          </p>
         </div>
       </div>
   }
@@ -263,18 +266,12 @@ class App extends Component {
     return (
       <div className="App">
         <div className="max-width-4 mx-auto">
-          <nav className="px2 py2 center sm-left-align sm-flex items-center">
+          <nav className="px2 py3 center sm-left-align sm-flex items-center">
             <div className="flex-auto">
               <a href="/">
-                <img className="logo mb1 mx-auto sm-mx0 sm-mb0 mt2" src={logo} alt="Roller"/>
+                <img className="logo mb1 mx-auto sm-mx0 sm-mb0" src={logo} alt="Roller"/>
               </a>
 
-            </div>
-            <div className="navigation">
-              <a className="text-decoration-none dark-blue link mr1 sm-mr3" target="_blank" href="https://github.com/rumblex/rubyrampage2016-objectobject">
-                <i className="fa fa-github mr1"></i>
-                GitHub
-              </a>
             </div>
           </nav>
         </div>
