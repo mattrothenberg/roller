@@ -12,7 +12,7 @@ end
 
 post '/convert' do
   content_type :json
-  { gif_url: convert_video_use_case(params[:video_id]) }.to_json
+  { gif_url: convert_video_use_case(params[:video_id], params[:start].to_i, params[:end].to_i) }.to_json
 end
 
 get '/stub' do

@@ -5,7 +5,7 @@ describe 'Converting a video' do
 
   it 'pulls from youtube and converts the video' do
 
-    gif_url = convert_video_use_case('jmwWT0Jbdgs')
+    gif_url = convert_video_use_case('CMNry4PE93Y', 7, 10)
 
     expect(gif_url).to include('http')
 
