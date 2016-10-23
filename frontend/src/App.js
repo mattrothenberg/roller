@@ -195,6 +195,7 @@ class App extends Component {
           <p className="h4 sm-h2">
             Enjoy.
           </p>
+          <p>We made this tool for <a className="pink" target="_blank" href="https://www.rubyrampage.com">RubyRampage 2016</a>. Help us win by <a className="pink" target="_blank" href="https://www.rubyrampage.com/entries/183-object-object">favoriting our app</a>.</p>
         </div>
       </div>
   }
@@ -271,7 +272,12 @@ class App extends Component {
               <a href="/">
                 <img className="logo mb1 mx-auto sm-mx0 sm-mb0" src={logo} alt="Roller"/>
               </a>
-
+            </div>
+            <div className="navigation">
+              <a className="text-decoration-none dark-blue link mr1 sm-mr3" target="_blank" href="https://www.rubyrampage.com/entries/183-object-object">
+                <i className="fa fa-diamond mr1"></i>
+                Help Us Win
+              </a>
             </div>
           </nav>
         </div>
