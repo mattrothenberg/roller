@@ -3,12 +3,15 @@ require_relative './convert.rb'
 require_relative './cloud_native_storage.rb'
 require_relative './trimming.rb'
 
+class GifTooLong < ArgumentError; end
+
 def convert_video_use_case(video_id, start_seconds, end_seconds)
   video_path = "/tmp/video-#{video_id}.mp4"
   trimmed_video_path = "/tmp/trimmed-video-#{video_id}.mp4"
   gif_path = "/tmp/gif-#{video_id}.gif"
   
   begin
+    raise GifTooLong.new if end_seconds - start_seconds > 15
 
     source_url = get_mp4_video_url video_id
 

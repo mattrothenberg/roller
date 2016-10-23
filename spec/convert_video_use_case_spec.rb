@@ -15,4 +15,8 @@ describe 'Converting a video' do
 
   end
 
+  it 'throws an exception when the interval is too long' do
+    expect{convert_video_use_case('CMNry4PE93Y', 0, 16)}.to raise_error GifTooLong
+  end
+
 end
