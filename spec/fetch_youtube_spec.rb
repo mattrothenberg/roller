@@ -2,10 +2,11 @@ require_relative '../youtube.rb'
 
 describe 'fetching youtube videos' do
   it 'gets the youtube videos' do
-    source_url = get_mp4_video_url('CMNry4PE93Y')
+    video = get_mp4_video_info('CMNry4PE93Y')
 
-    expect(source_url).to include('googlevideo.com')
-    expect(source_url).to include('mime=video%2Fmp4')
+    expect(video.url).to include('googlevideo.com')
+    expect(video.url).to include('mime=video%2Fmp4')
+    expect(video.length).to be > 10
   end
 end
 
@@ -21,8 +22,8 @@ describe 'downloading youtube videos' do
   end
 
   it 'stores the file at the given path' do
-    video_url = get_mp4_video_url('CMNry4PE93Y')
-    store_at(video_url, file_path)
+    video = get_mp4_video_info('CMNry4PE93Y')
+    store_at(video.url, file_path)
     File.open(file_path) do |file|
       expect(file.size).to be > 1024 * 10
     end

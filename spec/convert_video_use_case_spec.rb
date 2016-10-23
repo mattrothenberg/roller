@@ -19,4 +19,11 @@ describe 'Converting a video' do
     expect{convert_video_use_case('CMNry4PE93Y', 0, 16)}.to raise_error GifTooLong
   end
 
+  it 'throws an exception when the video is too long' do
+    expect{
+      long_video = 'cB57yJ0ZYAs'
+      convert_video_use_case(long_video, 0, 5)
+    }.to raise_error VideoTooLong
+  end
+
 end
