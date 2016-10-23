@@ -5,6 +5,7 @@ import $ from 'jquery';
 import YouTube from 'react-youtube';
 import Nouislider from 'react-nouislider';
 import Loader from './Loader.js';
+import ClipboardButton from 'react-clipboard.js';
 
 
 var Store = {
@@ -72,6 +73,11 @@ var Store = {
 
       case 'SUBMIT':
         this.loading = true;
+        break;
+
+      case 'RESET':
+        this.gifUrl = '';
+        break;
 
       default:
         return;
@@ -89,6 +95,7 @@ var Actions = {
     Store.dispatch({type: 'YOUTUBE_PLAYER_READY', player: player})
   },
   submit: () => {
+    Store.dispatch({type: 'SUBMIT'})
     $.ajax({
       type: 'POST',
       url: '/convert',
@@ -101,7 +108,7 @@ var Actions = {
         Store.dispatch({type: 'DATA_RECEIVED', data: data});
       }
     });
-    Store.dispatch({type: 'SUBMIT'})
+
   },
   updateUrl: (event) => {
     Store.dispatch({type: 'UPDATE_URL', value: event.target.value})
@@ -113,6 +120,9 @@ var Actions = {
     if(event.data === 0) {
       Store.dispatch({type: 'VIDEO_ENDED'});
     }
+  },
+  reset: () => {
+    Store.dispatch({type: 'RESET'})
   }
 };
 
@@ -198,8 +208,40 @@ class App extends Component {
   }
 
   showGif() {
-    return this.state.gifUrl &&
-      <img src={this.state.gifUrl} alt="GIF Brought To You By Roller"/>
+    return(
+        <div className="max-width-4 mx-auto mt3">
+          <div className="px2">
+            <div className="flex">
+              <button className="btn bg-blue h4 white btn-submit" onClick={Actions.reset}>
+                Back
+              </button>
+            </div>
+            <hr className="my1"/>
+            <div className="clearfix mt2">
+              <div className="col sm-col-6">
+                <figure className="gif-preview p1 m0">
+                  <img src={this.state.gifUrl} alt="GIF Brought To You By Roller"/>
+                </figure>    
+              </div>
+              <div className="col sm-col-6">
+                <div className="form-group relative">
+                  <input type="text" className="input form-control" readOnly={true} value={this.state.gifUrl}/>
+                  <ClipboardButton className="btn-clipboard bg-blue white px2" data-clipboard-text={this.state.gifUrl} button-title="Copied!">
+                    Copy
+                  </ClipboardButton>
+                </div>
+                <a
+                  target="_blank"
+                  href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent(`Check out this gif I made using #roller (http://objectobject.2016.rubyrampage.com) ${this.state.gifUrl}`)}
+                  className="btn bg-twitter white px2 inline-block right mt1">
+                  <i className="fa fa-twitter mr1"></i>
+                  Share on Twitter
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+    )
   }
 
   showLoader() {
@@ -209,7 +251,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="max-width-3 mx-auto">
+        <div className="max-width-4 mx-auto">
           <nav className="px2 py2 center sm-left-align sm-flex items-center">
             <div className="flex-auto">
               <img className="logo mb1 mx-auto sm-mx0 sm-mb0 mt2" src={logo} alt="Roller"/>
@@ -220,22 +262,26 @@ class App extends Component {
             </div>
           </nav>
         </div>
-        <div className="max-width-3 mx-auto">
-          <div className="px2 mt1">
-            <input className="input form-control"
-                   disabled={this.state.loading}
-                   value={this.state.url}
-                   onChange={Actions.updateUrl}
-                   type="text"
-                   name="url"
-                   placeholder="Paste Youtube Video URL"/>
-            { this.showPlayer() }
-            { this.showSlider() }
-            { this.showGif() }
-          </div>
-        </div>
+        { this.state.gifUrl ? this.showGif() : this.showSetupFlow() }
       </div>
     );
+  }
+
+  showSetupFlow() {
+    return <div className="max-width-4 mx-auto">
+      <div className="px2 mt1">
+        <input autoFocus
+               className="input form-control"
+               disabled={this.state.loading}
+               value={this.state.url}
+               onChange={Actions.updateUrl}
+               type="text"
+               name="url"
+               placeholder="Paste Youtube Video URL"/>
+        { this.showPlayer() }
+        { this.showSlider() }
+      </div>
+    </div>
   }
 }
 
