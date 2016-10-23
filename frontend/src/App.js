@@ -266,7 +266,7 @@ class App extends Component {
 
             </div>
             <div className="navigation">
-              <a className="text-decoration-none dark-blue link mr1 sm-mr3" href="https://github.com/rumblex/rubyrampage2016-objectobject">
+              <a className="text-decoration-none dark-blue link mr1 sm-mr3" target="_blank" href="https://github.com/rumblex/rubyrampage2016-objectobject">
                 <i className="fa fa-github mr1"></i>
                 GitHub
               </a>
