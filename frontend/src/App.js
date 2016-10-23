@@ -7,7 +7,8 @@ import Nouislider from 'react-nouislider';
 import Loader from './Loader.js';
 import ClipboardButton from 'react-clipboard.js';
 
-const MAX_LENGTH = 15;
+const MAX_GIF_LENGTH = 15;
+const MAX_VIDEO_LENGTH = 20 * 60;
 
 var Store = {
 
@@ -33,7 +34,8 @@ var Store = {
       player: this.player,
       gifUrl: this.gifUrl,
       validationErrors: {
-        tooLong: this.end - this.start > MAX_LENGTH
+        tooLong: this.end - this.start > MAX_GIF_LENGTH,
+        videoTooLong: this.videoLength > MAX_VIDEO_LENGTH
       }
     }
   },
@@ -151,7 +153,7 @@ class App extends Component {
 
   showPlayer() {
     return this.state.url ?
-      <div className="chrome-window mt3 mb4">
+      <div className="chrome-window mt3 mb1">
         <div className="chrome-header">
           <ul className="list-reset my0">
             <li className="inline-block mr1"><div className="dot close"></div></li>
@@ -192,7 +194,7 @@ class App extends Component {
 
   showSlider() {
     return this.state.player &&
-      <div>
+      <div class="mt3">
           <Nouislider
             disabled={this.state.loading}
             range={{min: 0, max: this.state.videoLength}}
@@ -203,11 +205,11 @@ class App extends Component {
             onChange={this.sliderUpdated}
           />
           <p className="mb0">
-            {`Set the start and end points (max length is ${MAX_LENGTH} seconds).`}
+            {`Set the start and end points (max length is ${MAX_GIF_LENGTH} seconds).`}
           </p>
           <button
             className="btn bg-blue h3  white mt2 btn-submit right"
-            disabled={this.state.loading || this.state.validationErrors.tooLong}
+            disabled={this.state.loading || this.state.validationErrors.tooLong || this.state.validationErrors.videoTooLong}
             onClick={Actions.submit}>Convert to Gif</button>
         </div>
   }
@@ -288,6 +290,7 @@ class App extends Component {
                name="url"
                placeholder="Paste Youtube Video URL"/>
         { this.showPlayer() }
+        { this.state.validationErrors.videoTooLong && <p className="error-message h2 red">We don't have enough hamsters to process videos that long! Please pick one 20 minutes or shorter.</p> }
         { this.showSlider() }
       </div>
     </div>
