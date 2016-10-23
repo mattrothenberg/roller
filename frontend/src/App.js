@@ -111,7 +111,7 @@ var Actions = {
 };
 
 const opts = {
-  height: '390',
+  height: '300',
   width: '640',
   playerVars: { // https://developers.google.com/youtube/player_parameters
     autoplay: 0
@@ -188,7 +188,7 @@ class App extends Component {
             tooltips
             onChange={this.sliderUpdated}
           />
-          <button className="btn bg-blue white mt4" onClick={Actions.submit}>Convert to Gif</button>
+          <button className="btn bg-blue white mt3 right" onClick={Actions.submit}>Convert to Gif</button>
         </div>
   }
 
@@ -200,6 +200,13 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <div className="loader-wrap flex items-center justify-center">
+          <div className="loader is-loading">
+            <span className="binary"></span>
+            <span className="binary"></span>
+            <span className="getting-there">LOADING STUFF...</span>
+          </div>
+        </div>
         <div className="max-width-3 mx-auto">
           <nav className="px2 py2 center sm-left-align sm-flex items-center">
             <div className="flex-auto">
