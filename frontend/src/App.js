@@ -140,26 +140,42 @@ class App extends Component {
 
   showPlayer() {
     return this.state.url ?
-      <div>
-        <YouTube
-          className="mt3 mb4 yt-player"
-          videoId={this.state.videoId}
-          opts={{
-            height: '390',
-            width: '640',
-            playerVars: { // https://developers.google.com/youtube/player_parameters
-              autoplay: 1,
-              loop: 1,
-              playlist: this.state.videoId,
-              start: this.state.start,
-              end: this.state.end
-            }
-          }}
-          onReady={this.onYouTubePlayerReady}
-          onStateChange={Actions.changePlayerState}
-        />
+      <div className="chrome-window mt3 mb4">
+        <div className="chrome-header">
+          <ul className="list-reset my0">
+            <li className="inline-block mr1"><div className="dot close"></div></li>
+            <li className="inline-block mr1"><div className="dot minimize"></div></li>
+            <li className="inline-block mr1"><div className="dot maximize"></div></li>
+          </ul>
+        </div>
+        <div className="chrome-body p1">
+          <YouTube
+            className="yt-player"
+            videoId={this.state.videoId}
+            opts={{
+              height: '390',
+              width: '640',
+              playerVars: { // https://developers.google.com/youtube/player_parameters
+                autoplay: 1,
+                loop: 1,
+                playlist: this.state.videoId,
+                start: this.state.start,
+                end: this.state.end
+              }
+            }}
+            onReady={this.onYouTubePlayerReady}
+            onStateChange={Actions.changePlayerState}
+          />
+        </div>
       </div> :
-      <h1>Please enter a video URL</h1>;
+      <div className="clearfix">
+        <div className="sm-col-7">
+          <h1 className="regular h4">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodoconsequat.
+          </h1>
+        </div>
+      </div>
   }
 
   showSlider() {
@@ -183,10 +199,21 @@ class App extends Component {
 
   render() {
     return (
-      <div className="max-width-3 mx-auto">
-        <div className="px2 mt3">
-          <div className="App">
-            <input className="input" value={this.state.url} onChange={Actions.updateUrl} type="text" name="url" placeholder="Enter Youtube Video URL"/>
+      <div className="App">
+        <div className="max-width-3 mx-auto">
+          <nav className="px2 py2 center sm-left-align sm-flex items-center">
+            <div className="flex-auto">
+              <img className="logo mb1 mx-auto sm-mx0 sm-mb0" src={logo} alt="Roller"/>
+            </div>
+            <div className="navigation">
+              <a className="text-decoration-none dark-blue link mr1 sm-mr3" href="#">GitHub</a>
+              <a className="text-decoration-none dark-blue link mr1 sm-mr3" href="#">About</a>
+            </div>
+          </nav>
+        </div>
+        <div className="max-width-3 mx-auto">
+          <div className="px2 mt1">
+            <input className="input form-control" value={this.state.url} onChange={Actions.updateUrl} type="text" name="url" placeholder="Paste Youtube Video URL"/>
             { this.showPlayer() }
             { this.showSlider() }
             { this.showGif() }
