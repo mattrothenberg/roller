@@ -4,6 +4,7 @@ import './styles.scss';
 import $ from 'jquery';
 import YouTube from 'react-youtube';
 import Nouislider from 'react-nouislider';
+import Loader from './Loader.js';
 
 
 var Store = {
@@ -13,6 +14,7 @@ var Store = {
   videoLength: 1,
   videoId: '',
   url: '',
+  loading: false,
   start: 0,
   end: 0,
   player: null,
@@ -23,6 +25,7 @@ var Store = {
       videoLength: this.videoLength,
       videoId: this.videoId,
       url: this.url,
+      loading: this.loading,
       start: this.start,
       end: this.end,
       player: this.player,
@@ -63,9 +66,12 @@ var Store = {
         break;
 
       case 'DATA_RECEIVED':
-        console.log(action.data);
         this.gifUrl = action.data.gif_url;
+        this.loading = false;
         break;
+
+      case 'SUBMIT':
+        this.loading = true;
 
       default:
         return;
@@ -110,14 +116,6 @@ var Actions = {
   }
 };
 
-const opts = {
-  height: '390',
-  width: '640',
-  playerVars: { // https://developers.google.com/youtube/player_parameters
-    autoplay: 0
-  }
-};
-
 class App extends Component {
   constructor() {
     super();
@@ -148,7 +146,8 @@ class App extends Component {
             <li className="inline-block mr1"><div className="dot maximize"></div></li>
           </ul>
         </div>
-        <div className="chrome-body p1">
+        <div className="chrome-body p1 relative">
+          { this.showLoader() }
           <YouTube
             className="yt-player"
             videoId={this.state.videoId}
@@ -157,6 +156,7 @@ class App extends Component {
               width: '640',
               playerVars: { // https://developers.google.com/youtube/player_parameters
                 autoplay: 1,
+                iv_load_policy: 3,
                 loop: 1,
                 playlist: this.state.videoId,
                 start: this.state.start,
@@ -182,13 +182,18 @@ class App extends Component {
     return this.state.player &&
       <div>
           <Nouislider
+            disabled={this.state.loading}
             range={{min: 0, max: this.state.videoLength}}
             start={[this.state.start, this.state.end]}
             step={1}
+            connect={true}
             tooltips
             onChange={this.sliderUpdated}
           />
-          <button className="btn bg-blue white mt4" onClick={Actions.submit}>Convert to Gif</button>
+          <button
+            className="btn bg-blue h3  white mt4 btn-submit right"
+            disabled={this.state.loading}
+            onClick={Actions.submit}>Convert to Gif</button>
         </div>
   }
 
@@ -197,13 +202,17 @@ class App extends Component {
       <img src={this.state.gifUrl} alt="GIF Brought To You By Roller"/>
   }
 
+  showLoader() {
+    return this.state.loading && <Loader></Loader>;
+  }
+
   render() {
     return (
       <div className="App">
         <div className="max-width-3 mx-auto">
           <nav className="px2 py2 center sm-left-align sm-flex items-center">
             <div className="flex-auto">
-              <img className="logo mb1 mx-auto sm-mx0 sm-mb0" src={logo} alt="Roller"/>
+              <img className="logo mb1 mx-auto sm-mx0 sm-mb0 mt2" src={logo} alt="Roller"/>
             </div>
             <div className="navigation">
               <a className="text-decoration-none dark-blue link mr1 sm-mr3" href="#">GitHub</a>
@@ -213,7 +222,13 @@ class App extends Component {
         </div>
         <div className="max-width-3 mx-auto">
           <div className="px2 mt1">
-            <input className="input form-control" value={this.state.url} onChange={Actions.updateUrl} type="text" name="url" placeholder="Paste Youtube Video URL"/>
+            <input className="input form-control"
+                   disabled={this.state.loading}
+                   value={this.state.url}
+                   onChange={Actions.updateUrl}
+                   type="text"
+                   name="url"
+                   placeholder="Paste Youtube Video URL"/>
             { this.showPlayer() }
             { this.showSlider() }
             { this.showGif() }
