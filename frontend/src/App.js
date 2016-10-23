@@ -6,6 +6,7 @@ import YouTube from 'react-youtube';
 import Nouislider from 'react-nouislider';
 import Loader from './Loader.js';
 import ClipboardButton from 'react-clipboard.js';
+import extractYoutubeId from './extract-youtube-id';
 
 const MAX_GIF_LENGTH = 15;
 const MAX_VIDEO_LENGTH = 20 * 60;
@@ -44,16 +45,11 @@ var Store = {
     switch (action.type) {
       case 'UPDATE_URL':
         this.url = action.value;
-        this.videoId =
-          this.url
-            .substr(this.url.indexOf('?') + 1)
-            .split('&')
-            .filter(function(queryParam) { return queryParam.substr(0,2) === 'v='; })[0]
-            .split('=')[1];
+        this.videoId = extractYoutubeId(this.url);
         break;
 
       case 'UPDATE_SLIDER':
-        if(this.start != action.left) {
+        if (this.start != action.left) {
           this.player.seekTo(action.left);
         }
         this.start = action.left;
@@ -120,10 +116,10 @@ var Actions = {
     Store.dispatch({type: 'UPDATE_URL', value: event.target.value})
   },
   updateSlider: (left, right) => {
-    Store.dispatch({type: 'UPDATE_SLIDER', left: left, right: right })
+    Store.dispatch({type: 'UPDATE_SLIDER', left: left, right: right})
   },
   changePlayerState: (event) => {
-    if(event.data === 0) {
+    if (event.data === 0) {
       Store.dispatch({type: 'VIDEO_ENDED'});
     }
   },
@@ -144,7 +140,9 @@ class App extends Component {
 
   componentDidMount() {
     var self = this;
-    Store.listeners.push(function(store) { self.setState(store.getState()); });
+    Store.listeners.push(function (store) {
+      self.setState(store.getState());
+    });
   }
 
   sliderUpdated(event) {
@@ -156,9 +154,15 @@ class App extends Component {
       <div className="chrome-window mt3 mb1">
         <div className="chrome-header">
           <ul className="list-reset my0">
-            <li className="inline-block mr1"><div className="dot close"></div></li>
-            <li className="inline-block mr1"><div className="dot minimize"></div></li>
-            <li className="inline-block mr1"><div className="dot maximize"></div></li>
+            <li className="inline-block mr1">
+              <div className="dot close"></div>
+            </li>
+            <li className="inline-block mr1">
+              <div className="dot minimize"></div>
+            </li>
+            <li className="inline-block mr1">
+              <div className="dot maximize"></div>
+            </li>
           </ul>
         </div>
         <div className="chrome-body p1 relative">
@@ -215,38 +219,39 @@ class App extends Component {
   }
 
   showGif() {
-    return(
-        <div className="max-width-4 mx-auto mt3">
-          <div className="px2">
-            <div className="clearfix mt2">
-              <div className="col col-12 center">
-                <figure className="gif-preview p1 m0">
-                  <img src={this.state.gifUrl} alt="GIF Brought To You By Roller"/>
-                </figure>
-              </div>
+    return (
+      <div className="max-width-4 mx-auto mt3">
+        <div className="px2">
+          <div className="clearfix mt2">
+            <div className="col col-12 center">
+              <figure className="gif-preview p1 m0">
+                <img src={this.state.gifUrl} alt="GIF Brought To You By Roller"/>
+              </figure>
             </div>
-            <div className="form-group relative col-8 mx-auto mt2">
-              <input type="text" className="input form-control" readOnly={true} value={this.state.gifUrl}/>
-              <ClipboardButton className="btn-clipboard bg-blue white px2" data-clipboard-text={this.state.gifUrl} button-title="Copied!">
-                Copy
-              </ClipboardButton>
-            </div>
-            <div className="clearfix">
-              <div className="col sm-col-12 center">
-                <a
-                  target="_blank"
-                  href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent(`Check out this gif I made using #roller (http://objectobject.2016.rubyrampage.com) ${this.state.gifUrl}`)}
-                  className="btn bg-twitter white px2 inline-block mt1">
-                  <i className="fa fa-twitter mr1"></i>
-                  Share on Twitter
-                </a>
-                <button className="btn bg-pink h4 white mt1 inline-block sm-ml2" onClick={Actions.reset}>
-                  Roll Another One
-                </button>
-              </div>
+          </div>
+          <div className="form-group relative col-8 mx-auto mt2">
+            <input type="text" className="input form-control" readOnly={true} value={this.state.gifUrl}/>
+            <ClipboardButton className="btn-clipboard bg-blue white px2" data-clipboard-text={this.state.gifUrl}
+                             button-title="Copied!">
+              Copy
+            </ClipboardButton>
+          </div>
+          <div className="clearfix">
+            <div className="col sm-col-12 center">
+              <a
+                target="_blank"
+                href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent(`Check out this gif I made using #roller (http://objectobject.2016.rubyrampage.com) ${this.state.gifUrl}`)}
+                className="btn bg-twitter white px2 inline-block mt1">
+                <i className="fa fa-twitter mr1"></i>
+                Share on Twitter
+              </a>
+              <button className="btn bg-pink h4 white mt1 inline-block sm-ml2" onClick={Actions.reset}>
+                Roll Another One
+              </button>
             </div>
           </div>
         </div>
+      </div>
     )
   }
 
