@@ -16,6 +16,7 @@ var Store = {
   start: 0,
   end: 0,
   player: null,
+  gifUrl: null,
 
   getState: function () {
     return {
@@ -24,7 +25,8 @@ var Store = {
       url: this.url,
       start: this.start,
       end: this.end,
-      player: this.player
+      player: this.player,
+      gifUrl: this.gifUrl
     }
   },
 
@@ -58,6 +60,11 @@ var Store = {
 
       case 'VIDEO_ENDED':
         this.player.seekTo(this.start);
+        break;
+
+      case 'DATA_RECEIVED':
+        console.log(action.data);
+        this.gifUrl = action.data.gif_url;
         break;
 
       default:
@@ -169,6 +176,11 @@ class App extends Component {
         </div>
   }
 
+  showGif() {
+    return this.state.gifUrl &&
+      <img src={this.state.gifUrl} alt="GIF Brought To You By Roller"/>
+  }
+
   render() {
     return (
       <div className="max-width-3 mx-auto">
@@ -177,6 +189,7 @@ class App extends Component {
             <input className="input" value={this.state.url} onChange={Actions.updateUrl} type="text" name="url" placeholder="Enter Youtube Video URL"/>
             { this.showPlayer() }
             { this.showSlider() }
+            { this.showGif() }
           </div>
         </div>
       </div>

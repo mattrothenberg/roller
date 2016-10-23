@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'json'
 require_relative './convert_video_use_case.rb'
 
 set :public_folder, './frontend/build'
@@ -10,7 +11,8 @@ get '/' do
 end
 
 post '/convert' do
-  { gif_url: convert_video_use_case(params[:video_id]) }
+  content_type :json
+  { gif_url: convert_video_use_case(params[:video_id]) }.to_json
 end
 
 get '/stub' do
