@@ -20,7 +20,7 @@ var Store = {
   start: 0,
   end: 0,
   player: null,
-  gifUrl: null,
+  gifUrl: '',
 
   getState: function () {
     return {
@@ -182,10 +182,9 @@ class App extends Component {
         </div>
       </div> :
       <div className="clearfix">
-        <div className="sm-col-7">
-          <h1 className="regular h4">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodoconsequat.
+        <div className="col sm-col-7">
+          <h1 className="regular h4 sm-h2">
+            Roller allows you to easily isolate specific bits of YouTube videos – just the part you want to see – and then send the GIF as a short link to your friends while preserving the element of surprise.
           </h1>
         </div>
       </div>
@@ -217,32 +216,33 @@ class App extends Component {
     return(
         <div className="max-width-4 mx-auto mt3">
           <div className="px2">
-            <hr className="my1"/>
             <div className="clearfix mt2">
-              <div className="col sm-col-6">
+              <div className="col col-12 center">
                 <figure className="gif-preview p1 m0">
                   <img src={this.state.gifUrl} alt="GIF Brought To You By Roller"/>
-                </figure>    
+                </figure>
               </div>
-              <div className="col sm-col-6">
-                <div className="form-group relative">
-                  <input type="text" className="input form-control" readOnly={true} value={this.state.gifUrl}/>
-                  <ClipboardButton className="btn-clipboard bg-blue white px2" data-clipboard-text={this.state.gifUrl} button-title="Copied!">
-                    Copy
-                  </ClipboardButton>
-                </div>
+            </div>
+            <div className="form-group relative col-8 mx-auto mt2">
+              <input type="text" className="input form-control" readOnly={true} value={this.state.gifUrl}/>
+              <ClipboardButton className="btn-clipboard bg-blue white px2" data-clipboard-text={this.state.gifUrl} button-title="Copied!">
+                Copy
+              </ClipboardButton>
+            </div>
+            <div className="clearfix">
+              <div className="col sm-col-12 center">
                 <a
                   target="_blank"
                   href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent(`Check out this gif I made using #roller (http://objectobject.2016.rubyrampage.com) ${this.state.gifUrl}`)}
-                  className="btn bg-twitter white px2 inline-block right mt1">
+                  className="btn bg-twitter white px2 inline-block mt1">
                   <i className="fa fa-twitter mr1"></i>
                   Share on Twitter
                 </a>
+                <button className="btn bg-pink h4 white mt1 inline-block sm-ml2" onClick={Actions.reset}>
+                  Roll Another One
+                </button>
               </div>
             </div>
-            <button className="btn bg-pink h4 white block" onClick={Actions.reset}>
-              Another One
-            </button>
           </div>
         </div>
     )
@@ -258,11 +258,16 @@ class App extends Component {
         <div className="max-width-4 mx-auto">
           <nav className="px2 py2 center sm-left-align sm-flex items-center">
             <div className="flex-auto">
-              <img className="logo mb1 mx-auto sm-mx0 sm-mb0 mt2" src={logo} alt="Roller"/>
+              <a href="/">
+                <img className="logo mb1 mx-auto sm-mx0 sm-mb0 mt2" src={logo} alt="Roller"/>
+              </a>
+
             </div>
             <div className="navigation">
-              <a className="text-decoration-none dark-blue link mr1 sm-mr3" href="#">GitHub</a>
-              <a className="text-decoration-none dark-blue link mr1 sm-mr3" href="#">About</a>
+              <a className="text-decoration-none dark-blue link mr1 sm-mr3" href="https://github.com/rumblex/rubyrampage2016-objectobject">
+                <i className="fa fa-github mr1"></i>
+                GitHub
+              </a>
             </div>
           </nav>
         </div>
