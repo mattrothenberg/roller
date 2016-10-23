@@ -7,6 +7,7 @@ import Nouislider from 'react-nouislider';
 import Loader from './Loader.js';
 import ClipboardButton from 'react-clipboard.js';
 import extractYoutubeId from './extract-youtube-id';
+import Error from './Error.js';
 
 const MAX_GIF_LENGTH = 15;
 const MAX_VIDEO_LENGTH = 20 * 60;
@@ -23,9 +24,11 @@ var Store = {
   end: 0,
   player: null,
   gifUrl: '',
+  errorMessage: null,
 
   getState: function () {
     return {
+      errorMessage: this.errorMessage,
       videoLength: this.videoLength,
       videoId: this.videoId,
       url: this.url,
@@ -73,6 +76,11 @@ var Store = {
         this.loading = false;
         break;
 
+      case 'CONVERSION_FAILURE':
+        this.loading = false;
+        this.errorMessage = 'There was an error converting this video. Please try a different one. Shorter videos are more likely to work.';
+        break;
+
       case 'SUBMIT':
         this.loading = true;
         break;
@@ -97,7 +105,7 @@ var Actions = {
     Store.dispatch({type: 'YOUTUBE_PLAYER_READY', player: player})
   },
   submit: () => {
-    Store.dispatch({type: 'SUBMIT'})
+    Store.dispatch({type: 'SUBMIT'});
     $.ajax({
       type: 'POST',
       url: '/convert',
@@ -108,6 +116,9 @@ var Actions = {
       },
       success: (data) => {
         Store.dispatch({type: 'DATA_RECEIVED', data: data});
+      },
+      error: (data) => {
+        Store.dispatch({type: 'CONVERSION_FAILURE', data: data});
       }
     });
 
@@ -151,6 +162,7 @@ class App extends Component {
 
   showPlayer() {
     return this.state.url ?
+      <div>
       <div className="chrome-window mt3 mb1">
         <div className="chrome-header">
           <ul className="list-reset my0">
@@ -186,7 +198,10 @@ class App extends Component {
             onStateChange={Actions.changePlayerState}
           />
         </div>
-      </div> :
+      </div>
+      { this.state.errorMessage && <Error message={this.state.errorMessage}></Error>}
+      </div>
+      :
       <div className="clearfix">
         <div className="col sm-col-8">
           <p className="h4 sm-h2">
@@ -299,12 +314,7 @@ class App extends Component {
                placeholder="Paste Youtube Video URL"/>
         { this.showPlayer() }
         { this.state.validationErrors.videoTooLong &&
-          <div className="error flex items-center mt3 mb4 p1">
-            <div className="icon-error flex-1 px1">
-              <i className="fa fa-2x fa-exclamation-triangle"></i>
-            </div>
-            <h2 className="my0 px2 regular">We don't have enough hamsters to process videos that long! <br/> Please pick one 20 minutes or shorter.</h2>
-          </div>
+          <Error message="We don't have enough hamsters to process videos that long! Please pick one 20 minutes or shorter."/>
         }
         { this.showSlider() }
       </div>
