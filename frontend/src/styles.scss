@@ -362,3 +362,9 @@ body {
     width: 100px;
   }
 }
+
+.error {
+  background: $pink;
+  border: 3px solid $dark-blue;
+  box-shadow: 6px 6px 0 0 rgba(0, 0, 0, .2);
+}

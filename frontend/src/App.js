@@ -186,15 +186,15 @@ class App extends Component {
       <div className="clearfix">
         <div className="col sm-col-7">
           <h1 className="regular h4 sm-h2">
-            Roller allows you to easily isolate specific bits of YouTube videos – just the part you want to see – and then send the GIF as a short link to your friends while preserving the element of surprise.
+            Roller allows you to easily isolate specific bits of YouTube videos – just the part you want to see – and then send the GIF as a link to your friends while preserving the element of surprise.
           </h1>
         </div>
       </div>
   }
 
   showSlider() {
-    return this.state.player &&
-      <div class="mt3">
+    return this.state.player && !this.state.validationErrors.videoTooLong &&
+      <div className="mt4">
           <Nouislider
             disabled={this.state.loading}
             range={{min: 0, max: this.state.videoLength}}
@@ -290,7 +290,14 @@ class App extends Component {
                name="url"
                placeholder="Paste Youtube Video URL"/>
         { this.showPlayer() }
-        { this.state.validationErrors.videoTooLong && <p className="error-message h2 red">We don't have enough hamsters to process videos that long! Please pick one 20 minutes or shorter.</p> }
+        { this.state.validationErrors.videoTooLong &&
+          <div className="error flex items-center mt3 mb4 p1">
+            <div className="icon-error flex-1 px1">
+              <i className="fa fa-2x fa-exclamation-triangle"></i>
+            </div>
+            <h2 className="my0 px2 regular">We don't have enough hamsters to process videos that long! <br/> Please pick one 20 minutes or shorter.</h2>
+          </div>
+        }
         { this.showSlider() }
       </div>
     </div>
